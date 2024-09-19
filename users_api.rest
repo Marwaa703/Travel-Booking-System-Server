@@ -1,0 +1,13 @@
+POST http://localhost:3001/api/users
+Accept-Language: application/json
+
+{
+    "first_name":"latif",
+    "last_name":"essam",
+    "username":"latifessam",
+    "password_digest":"lolpop123"
+}
+###
+GET  http://localhost:3001/api/users/?id=8
+###
+DELETE   http://localhost:3001/api/users/9
