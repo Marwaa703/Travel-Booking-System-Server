@@ -3,6 +3,7 @@ import pool from '../db';
 interface Trip {
   id: number;
   name: string;
+  price: number;
   description?: string;
   images?: string;
   max_reservations: number;
@@ -12,10 +13,10 @@ interface Trip {
 // Create a new trip
 async function createTrip(trip: Trip): Promise<Trip | null> {
   try {
-    const { name, description, images, max_reservations, company_id } = trip;
+    const { name, price, description, images, max_reservations, company_id } = trip;
     const result = await pool.query(
-      `INSERT INTO trip (name, description, images, max_reservations, company_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
-      [name, description, images, max_reservations, company_id]
+      `INSERT INTO trip (name, price, description, images, max_reservations, company_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
+      [name, price, description, images, max_reservations, company_id]
     );
     return result.rows[0];
   } catch (error) {
