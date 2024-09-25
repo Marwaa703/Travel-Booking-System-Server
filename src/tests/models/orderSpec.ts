@@ -1,5 +1,5 @@
 import { Order, Orders } from "../../models/order";
-import { Users } from "../../models/user";
+import { Users } from "../../models/user.model";
 import { crud, staticOrder, staticUser } from "./../../constants/testing";
 
 const orderStore = new Orders();

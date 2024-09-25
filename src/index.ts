@@ -1,43 +1,21 @@
-import express from "express";
-import dotenv from "dotenv";
-// import cors from "cors";
-import bodyParser from "body-parser";
-
-import userRoutes from "./handlers/user";
-import logger from "./middlewares/logger";
-import productRoutes from "./handlers/product";
-import orderRoutes from "./handlers/order";
-import orderProductsRoutes from "./handlers/orderProducts";
-import categoryRoutes from "./handlers/category";
-import productCategoryRoutes from "./handlers/productCatgeoys";
+import express from 'express';
+import userRoutes from './handlers/user.handler';
 
 const app = express();
+import bodyParser from 'body-parser'; 
 
-dotenv.config();
-const { PORT } = process.env;
+app.use(express.json());
 
-// const corsOptions = {
-//   origin: `http://localhost:${PORT}`,
-//   optionsSuccessStatus: 200,
-// };
 
-// app.use(cors(corsOptions));
-// app.use("/", logger);
-app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.status(200).send("node server works");
+  res.status(200).send("VOYAGE Server is running.....");
 });
-// routes
+
 userRoutes(app);
-productRoutes(app);
-orderRoutes(app);
-orderProductsRoutes(app);
-categoryRoutes(app);
-productCategoryRoutes(app);
 
-app.listen(PORT, () =>
-  console.log(`node_server running on http://localhost:${PORT}`)
-);
+const PORT = process.env.PORT || 3001;
 
-export default app;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

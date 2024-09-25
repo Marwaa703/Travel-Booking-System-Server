@@ -3,7 +3,7 @@ import { userApis } from "../../constants/testing";
 import app from "./../../index";
 import { staticUser } from "./../../constants/testing";
 
-import { Users } from "../../models/user";
+import { Users } from "../../models/user.model";
 import { token } from "./../../constants/auth";
 
 const req = supertest(app);

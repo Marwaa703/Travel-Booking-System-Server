@@ -1,4 +1,4 @@
-import { User, Users } from "../../models/user";
+import { User, Users } from "../../models/user.model";
 import { crud, staticUser } from "./../../constants/testing";
 
 const store = new Users();

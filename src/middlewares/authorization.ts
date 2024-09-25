@@ -13,9 +13,14 @@ export const authorization = (
 ): void => {
   try {
     const token: string | undefined = req.headers.authorization?.split(" ")[1];
-    jwt.verify(token as string, SECRET_TOKEN as string);
+
+    if (!token) {
+      return <any> res.status(401).json({ error: "Access denied: No token provided" });
+    }
+
+    jwt.verify(token, SECRET_TOKEN as string);
     next();
   } catch (error) {
-    res.status(401).json(`Access denied Invalid Token, error: ${error}`);
+    res.status(401).json({ error: `Access denied: Invalid token, error: ${error}` });
   }
 };
