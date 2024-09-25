@@ -1,13 +1,19 @@
 import { Request, Response, Application } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import { authorization } from "../middlewares/authorization";
-import { createUser, getAllUsers, getUserById, updateUser, deleteUser, getUserByEmail } from "../models/user.model";
+import {
+  createUser,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  getUserByEmail,
+} from "../models/user.model";
 
 dotenv.config();
 const { SECRET_TOKEN } = process.env;
-
 
 const getAllUsersHandler = async (_req: Request, res: Response) => {
   try {
@@ -78,33 +84,38 @@ const deleteUserHandler = async (req: Request, res: Response) => {
   }
 };
 
-const authenticateHandler = async (req: Request, res: Response): Promise<void> => {
+const authenticateHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return <any> res.status(400).json({ error: "Email and password are required" });
+      return <any>(
+        res.status(400).json({ error: "Email and password are required" })
+      );
     }
     const user = await getUserByEmail(email);
     if (!user) {
-      return <any> res.status(401).json({ error: "Invalid credentials" });
+      return <any>res.status(401).json({ error: "Invalid credentials" });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return <any> res.status(401).json({ error: "Invalid credentials" });
+      return <any>res.status(401).json({ error: "Invalid credentials" });
     }
     const token = jwt.sign({ email: user.email }, SECRET_TOKEN as string, {
       expiresIn: "1h",
     });
     res.status(200).json({
       message: "User logged in successfully",
-      token, 
+      token,
     });
   } catch (error) {
     console.error("Failed to authenticate user:", error);
     res.status(500).json({ error: "Failed to authenticate user" });
   }
 };
-  
+
 const userRoutes = (app: Application) => {
   app.get("/voyage/users", [authorization], getAllUsersHandler);
   app.get("/voyage/users/:id", [authorization], getUserHandler);
