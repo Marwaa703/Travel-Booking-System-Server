@@ -1,8 +1,17 @@
 import { Request, Response, Application } from "express";
-import { createTripInstruction, getAllInstructionsByTripId, getTripInstructionById, updateTripInstruction, deleteTripInstruction } from "../models/trip_ins.model";
+import {
+  createTripInstruction,
+  getAllInstructionsByTripId,
+  getTripInstructionById,
+  updateTripInstruction,
+  deleteTripInstruction,
+} from "../models/trip_ins.model";
 
 // Handler to get all instructions for a trip by trip ID
-const getAllInstructionsByTripIdHandler = async (req: Request, res: Response) => {
+const getAllInstructionsByTripIdHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const tripId = parseInt(req.params.tripId);
     const instructions = await getAllInstructionsByTripId(tripId);
@@ -33,7 +42,9 @@ const createTripInstructionHandler = async (req: Request, res: Response) => {
     const newInstruction = req.body;
     const createdInstruction = await createTripInstruction(newInstruction);
     if (!createdInstruction) {
-      res.status(400).json({ error: "Failed to create trip instruction in DB" });
+      res
+        .status(400)
+        .json({ error: "Failed to create trip instruction in DB" });
     } else {
       res.status(201).json(createdInstruction);
     }
@@ -47,9 +58,14 @@ const updateTripInstructionHandler = async (req: Request, res: Response) => {
   try {
     const instructionId = parseInt(req.params.id);
     const updates = req.body;
-    const updatedInstruction = await updateTripInstruction(instructionId, updates);
+    const updatedInstruction = await updateTripInstruction(
+      instructionId,
+      updates
+    );
     if (!updatedInstruction) {
-      res.status(404).json({ error: "Instruction not found or failed to update" });
+      res
+        .status(404)
+        .json({ error: "Instruction not found or failed to update" });
     } else {
       res.status(200).json(updatedInstruction);
     }
@@ -74,7 +90,7 @@ const deleteTripInstructionHandler = async (req: Request, res: Response) => {
 };
 
 // Trip instructions routes
-const tripInsRoutes = (app: Application) => {
+const tripInstructionsRoutes = (app: Application) => {
   app.get("/trips/:tripId/instructions", getAllInstructionsByTripIdHandler);
   app.get("/instructions/:id", getTripInstructionHandler);
   app.post("/instructions", createTripInstructionHandler);
@@ -82,4 +98,4 @@ const tripInsRoutes = (app: Application) => {
   app.delete("/instructions/:id", deleteTripInstructionHandler);
 };
 
-export default tripInsRoutes;
+export default tripInstructionsRoutes;

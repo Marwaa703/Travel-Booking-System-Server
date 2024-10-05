@@ -1,6 +1,12 @@
 import { Request, Response, Application } from "express";
 import { authorization } from "../middlewares/authorization";
-import { createTrip, getAllTrips, getTripById, updateTrip, deleteTrip } from "../models/trip.model";
+import {
+  createTrip,
+  getAllTrips,
+  getTripById,
+  updateTrip,
+  deleteTrip,
+} from "../models/trip.model";
 
 // Handler to get all trips
 const getAllTripsHandler = async (_req: Request, res: Response) => {
@@ -15,7 +21,7 @@ const getAllTripsHandler = async (_req: Request, res: Response) => {
 // Handler to get a single trip by ID
 const getTripHandler = async (req: Request, res: Response) => {
   try {
-    const trip = await getTripById(parseInt(req.params.id));
+    const trip = await getTripById(req.params.id);
     if (!trip) {
       res.status(404).json({ error: "Trip not found" });
     } else {
@@ -45,7 +51,7 @@ const createTripHandler = async (req: Request, res: Response) => {
 const updateTripHandler = async (req: Request, res: Response) => {
   try {
     const updates = req.body;
-    const updatedTrip = await updateTrip(parseInt(req.params.id), updates);
+    const updatedTrip = await updateTrip(req.params.id, updates);
     if (!updatedTrip) {
       res.status(404).json({ error: "Trip not found or failed to update" });
     } else {
@@ -59,7 +65,7 @@ const updateTripHandler = async (req: Request, res: Response) => {
 // Handler to delete a trip
 const deleteTripHandler = async (req: Request, res: Response) => {
   try {
-    const success = await deleteTrip(parseInt(req.params.id));
+    const success = await deleteTrip(req.params.id);
     if (success) {
       res.status(200).json({ message: "Trip deleted successfully" });
     } else {

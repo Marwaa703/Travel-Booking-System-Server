@@ -1,11 +1,13 @@
 import { Request, Response, Application } from "express";
 import dotenv from "dotenv";
 import { authorization } from "../middlewares/authorization";
-import { Companies, Company } from "../models/company.model";
+import { Companies } from "../models/company.model";
+import { Company } from "../types/company";
 
 dotenv.config();
 
 const store = new Companies();
+
 const getAllCompanies = async (_req: Request, res: Response) => {
   try {
     const companies = await store.index();
@@ -17,9 +19,9 @@ const getAllCompanies = async (_req: Request, res: Response) => {
 
 const getCompany = async (req: Request, res: Response) => {
   try {
-    const company = await store.show(parseInt(req.params.id));
+    const company = await store.show(req.params.id); // Changed to string
     if (!company) {
-      res.status(404).json({ error: "company not found" });
+      res.status(404).json({ error: "Company not found" });
     } else {
       res.status(200).json(company);
     }
@@ -32,11 +34,12 @@ const createCompany = async (req: Request, res: Response) => {
   try {
     const company: Company = req.body;
 
-    const newcompany = await store.create({ ...company });
+    const newCompany = await store.create({ ...company });
 
-    if (!newcompany) {
+    if (!newCompany) {
       res.status(400).json({ error: "Failed to create company in DB" });
     } else {
+      res.status(201).json(newCompany); // Return the newly created company
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to create company" });
@@ -46,9 +49,9 @@ const createCompany = async (req: Request, res: Response) => {
 const updateCompany = async (req: Request, res: Response) => {
   try {
     const updates = req.body;
-    const updatedCompany = await store.update(parseInt(req.params.id), updates);
+    const updatedCompany = await store.update(req.params.id, updates); // Changed to string
     if (!updatedCompany) {
-      res.status(404).json({ error: "company not found or failed to update" });
+      res.status(404).json({ error: "Company not found or failed to update" });
     } else {
       res.status(200).json(updatedCompany);
     }
@@ -59,11 +62,11 @@ const updateCompany = async (req: Request, res: Response) => {
 
 const deleteCompany = async (req: Request, res: Response) => {
   try {
-    const success = await store.destroy(parseInt(req.params.id));
+    const success = await store.destroy(req.params.id); // Changed to string
     if (success) {
-      res.status(200).json({ message: "company deleted successfully" });
+      res.status(200).json({ message: "Company deleted successfully" });
     } else {
-      res.status(404).json({ error: "company not found" });
+      res.status(404).json({ error: "Company not found" });
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to delete company" });

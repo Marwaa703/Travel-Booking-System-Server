@@ -1,16 +1,6 @@
 import pool from "../db";
-
-export interface Company {
-  id?: number;
-  name: string;
-  physical_address: string;
-  logo?: string;
-  wallet_address: string;
-  paper_document: string;
-  representitive_id: string;
-}
-
 import dotenv from "dotenv";
+import { Company } from "../types/company";
 
 dotenv.config();
 
@@ -18,23 +8,15 @@ export class Companies {
   // Create a new company
   async create(company: Company): Promise<Company | null> {
     try {
-      const {
-        name,
-        physical_address,
-        paper_document,
-        representitive_id,
-        wallet_address,
-        logo,
-      } = company;
+      const { name, address, logo, wallet, approved } = company;
       const result = await pool.query(
-        `INSERT INTO companies (name, physical_address,paper_document,representitive_id,wallet_address,logo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
+        `INSERT INTO companies (name, address, logo, wallet, approved) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
         [
           name,
-          physical_address,
-          paper_document,
-          representitive_id,
-          wallet_address,
+          address,
           logo,
+          wallet,
+          approved ?? false, // Set default value if not provided
         ]
       );
       return result.rows[0];
@@ -56,7 +38,8 @@ export class Companies {
   }
 
   // Get a single company by ID
-  async show(id: number): Promise<Company | null> {
+  async show(id: string): Promise<Company | null> {
+    // Changed to string
     try {
       const result = await pool.query(
         "SELECT * FROM companies WHERE id = $1;",
@@ -86,7 +69,8 @@ export class Companies {
   }
 
   // Update a company
-  async update(id: number, updates: Partial<Company>): Promise<Company | null> {
+  async update(id: string, updates: Partial<Company>): Promise<Company | null> {
+    // Changed to string
     const fields = Object.keys(updates);
     const values = Object.values(updates);
     const setClause = fields
@@ -106,7 +90,8 @@ export class Companies {
   }
 
   // Delete a company
-  async destroy(id: number): Promise<boolean> {
+  async destroy(id: string): Promise<boolean> {
+    // Changed to string
     try {
       await pool.query("DELETE FROM companies WHERE id = $1;", [id]);
       return true;

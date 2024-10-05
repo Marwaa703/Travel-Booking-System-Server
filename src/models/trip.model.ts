@@ -1,26 +1,36 @@
-import pool from '../db';
-
-interface Trip {
-  id: number;
-  name: string;
-  price: number;
-  description?: string;
-  images?: string;
-  max_reservations: number;
-  company_id: number | null; // could be null if company deleted 
-}
+import pool from "../db";
+import { Trip } from "../types/trip";
 
 // Create a new trip
 async function createTrip(trip: Trip): Promise<Trip | null> {
   try {
-    const { name, price, description, images, max_reservations, company_id } = trip;
+    const {
+      companyId,
+      name,
+      description,
+      price,
+      max_reservations,
+      date,
+      status,
+      rate,
+    } = trip;
     const result = await pool.query(
-      `INSERT INTO trip (name, price, description, images, max_reservations, company_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
-      [name, price, description, images, max_reservations, company_id]
+      `INSERT INTO trip (company_id, name, description, price, max_reservations, date, status, rate) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;`,
+      [
+        companyId,
+        name,
+        description,
+        price,
+        max_reservations,
+        date,
+        status,
+        rate,
+      ]
     );
     return result.rows[0];
   } catch (error) {
-    console.error('Failed to create trip:', error);
+    console.error("Failed to create trip:", error);
     return null;
   }
 }
@@ -28,30 +38,37 @@ async function createTrip(trip: Trip): Promise<Trip | null> {
 // Get all trips
 async function getAllTrips(): Promise<Trip[]> {
   try {
-    const result = await pool.query('SELECT * FROM trip;');
+    const result = await pool.query("SELECT * FROM trip;");
     return result.rows;
   } catch (error) {
-    console.error('Failed to retrieve trips:', error);
+    console.error("Failed to retrieve trips:", error);
     return [];
   }
 }
 
 // Get a single trip by ID
-async function getTripById(tripId: number): Promise<Trip | null> {
+async function getTripById(tripId: string): Promise<Trip | null> {
   try {
-    const result = await pool.query('SELECT * FROM trip WHERE id = $1;', [tripId]);
+    const result = await pool.query("SELECT * FROM trip WHERE id = $1;", [
+      tripId,
+    ]);
     return result.rows[0];
   } catch (error) {
-    console.error('Failed to retrieve trip:', error);
+    console.error("Failed to retrieve trip:", error);
     return null;
   }
 }
 
 // Update a trip
-async function updateTrip(tripId: number, updates: Partial<Trip>): Promise<Trip | null> {
+async function updateTrip(
+  tripId: string,
+  updates: Partial<Trip>
+): Promise<Trip | null> {
   const fields = Object.keys(updates);
   const values = Object.values(updates);
-  const setClause = fields.map((field, index) => `${field} = $${index + 2}`).join(', ');
+  const setClause = fields
+    .map((field, index) => `${field} = $${index + 2}`)
+    .join(", ");
 
   try {
     const result = await pool.query(
@@ -60,18 +77,18 @@ async function updateTrip(tripId: number, updates: Partial<Trip>): Promise<Trip 
     );
     return result.rows[0];
   } catch (error) {
-    console.error('Failed to update trip:', error);
+    console.error("Failed to update trip:", error);
     return null;
   }
 }
 
 // Delete a trip
-async function deleteTrip(tripId: number): Promise<boolean> {
+async function deleteTrip(tripId: string): Promise<boolean> {
   try {
-    await pool.query('DELETE FROM trip WHERE id = $1;', [tripId]);
+    await pool.query("DELETE FROM trip WHERE id = $1;", [tripId]);
     return true;
   } catch (error) {
-    console.error('Failed to delete trip:', error);
+    console.error("Failed to delete trip:", error);
     return false;
   }
 }

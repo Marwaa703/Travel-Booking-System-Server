@@ -1,26 +1,34 @@
 import pool from "../db";
-
-export interface CompanyUser {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  gender?: string;
-  phone?: string;
-  birth_date?: Date;
-  role: string;
-  company_id?: string; // generated here optionally
-}
+import { CompanyUser } from "../types/company";
 
 export class CompanyUsers {
   // Create a new CompanyUser
-  async create(CompanyUser: CompanyUser): Promise<CompanyUser | null> {
+  async create(companyUser: CompanyUser): Promise<CompanyUser | null> {
     try {
-      const { name, email, password, gender, phone, birth_date, role } =
-        CompanyUser;
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        phone,
+        birthDate,
+        role,
+        gender,
+      } = companyUser;
       const result = await pool.query(
-        `INSERT INTO company_users (name, email, password, gender, phone, birth_date, role) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
-        [name, email, password, gender, phone, birth_date, role]
+        `INSERT INTO company_users (first_name, last_name, email, password, phone, birth_date, role, gender, company_id) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;`,
+        [
+          firstName,
+          lastName,
+          email,
+          password,
+          phone,
+          birthDate,
+          role,
+          gender,
+          companyUser.companyId,
+        ]
       );
       return result.rows[0];
     } catch (error) {
@@ -29,7 +37,7 @@ export class CompanyUsers {
     }
   }
 
-  // Get all CompaniesUsers
+  // Get all CompanyUsers
   async index(): Promise<CompanyUser[]> {
     try {
       const result = await pool.query("SELECT * FROM company_users;");
@@ -39,7 +47,7 @@ export class CompanyUsers {
       return [];
     }
   }
-  // Get all CompaniesUsers
+
   async indexCompany(companyId: string): Promise<CompanyUser[]> {
     try {
       const result = await pool.query(
@@ -52,19 +60,20 @@ export class CompanyUsers {
       return [];
     }
   }
+
   async showCompanyUser(
     companyId: string,
     userId: string
-  ): Promise<CompanyUser[]> {
+  ): Promise<CompanyUser | null> {
     try {
       const result = await pool.query(
         `SELECT * FROM company_users WHERE company_id = $1 AND id = $2;`,
         [companyId, userId]
       );
-      return result.rows;
+      return result.rows[0];
     } catch (error) {
-      console.error("Failed to retrieve CompanyUsers:", error);
-      return [];
+      console.error("Failed to retrieve CompanyUser:", error);
+      return null;
     }
   }
 

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export interface User {
   id?: string;
   firstName: string;
@@ -7,7 +6,7 @@ export interface User {
   password: string;
   gender?: string;
   phone: string;
-  birthdate?: Date;
+  birthDate?: Date;
 }
 
 export type UserTypes = "Admin" | "Company" | "Anonymous" | "User";

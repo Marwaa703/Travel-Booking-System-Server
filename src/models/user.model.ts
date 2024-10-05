@@ -1,23 +1,14 @@
 import pool from "../db";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  gender?: string;
-  phone?: string;
-  birth_date?: Date;
-  age?: number;
-}
+import { User } from "../types/user";
 
 // Create a new user
 async function createUser(user: User): Promise<User | null> {
   try {
-    const { name, email, password, gender, phone, birth_date } = user;
+    const { firstName, lastName, email, password, gender, phone, birthDate } =
+      user;
     const result = await pool.query(
-      `INSERT INTO users (name, email, password, gender, phone, birth_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
-      [name, email, password, gender, phone, birth_date]
+      `INSERT INTO users (first_name, last_name, email, password, gender, phone, birth_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
+      [firstName, lastName, email, password, gender, phone, birthDate]
     );
     return result.rows[0];
   } catch (error) {
@@ -38,7 +29,7 @@ async function getAllUsers(): Promise<User[]> {
 }
 
 // Get a single user by ID
-async function getUserById(userId: number): Promise<User | null> {
+async function getUserById(userId: string): Promise<User | null> {
   try {
     const result = await pool.query("SELECT * FROM users WHERE id = $1;", [
       userId,
@@ -68,7 +59,7 @@ const getUserByEmail = async (email: string): Promise<User | null> => {
 
 // Update a user
 async function updateUser(
-  userId: number,
+  userId: string,
   updates: Partial<User>
 ): Promise<User | null> {
   const fields = Object.keys(updates);
@@ -90,7 +81,7 @@ async function updateUser(
 }
 
 // Delete a user
-async function deleteUser(userId: number): Promise<boolean> {
+async function deleteUser(userId: string): Promise<boolean> {
   try {
     await pool.query("DELETE FROM users WHERE id = $1;", [userId]);
     return true;

@@ -26,7 +26,7 @@ const getAllUsersHandler = async (_req: Request, res: Response) => {
 
 const getUserHandler = async (req: Request, res: Response) => {
   try {
-    const user = await getUserById(parseInt(req.params.id));
+    const user = await getUserById(req.params.id); // Changed to string
     if (!user) {
       res.status(404).json({ error: "User not found" });
     } else {
@@ -47,7 +47,7 @@ const createUserHandler = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Failed to create user in DB" });
     } else {
       const token = jwt.sign(
-        { name: newUser.name, email: newUser.email },
+        { name: newUser.firstName, email: newUser.email }, // Adjusted to match the new interface
         SECRET_TOKEN as string
       );
       res.status(201).json({ token });
@@ -60,7 +60,7 @@ const createUserHandler = async (req: Request, res: Response) => {
 const updateUserHandler = async (req: Request, res: Response) => {
   try {
     const updates = req.body;
-    const updatedUser = await updateUser(parseInt(req.params.id), updates);
+    const updatedUser = await updateUser(req.params.id, updates); // Changed to string
     if (!updatedUser) {
       res.status(404).json({ error: "User not found or failed to update" });
     } else {
@@ -73,7 +73,7 @@ const updateUserHandler = async (req: Request, res: Response) => {
 
 const deleteUserHandler = async (req: Request, res: Response) => {
   try {
-    const success = await deleteUser(parseInt(req.params.id));
+    const success = await deleteUser(req.params.id); // Changed to string
     if (success) {
       res.status(200).json({ message: "User deleted successfully" });
     } else {

@@ -1,12 +1,14 @@
 import { Request, Response, Application } from "express";
 import dotenv from "dotenv";
 import { authorization } from "../middlewares/authorization";
-import { CompanyUsers, CompanyUser } from "../models/company_users.model";
+import { CompanyUsers } from "../models/company_users.model";
+import { CompanyUser } from "../types/company";
 
 dotenv.config();
 
 const store = new CompanyUsers();
-// get all users
+
+// Get all users
 const getAllCompaniesUsers = async (_req: Request, res: Response) => {
   try {
     const companiesUsers = await store.index();
@@ -16,12 +18,12 @@ const getAllCompaniesUsers = async (_req: Request, res: Response) => {
   }
 };
 
-// get users of company with id
+// Get users of company with id
 const getCompanyUsers = async (req: Request, res: Response) => {
   try {
     const companyUsers = await store.indexCompany(req.params.companyId);
-    if (!companyUsers) {
-      res.status(404).json({ error: "companyUsers not found" });
+    if (!companyUsers.length) {
+      res.status(404).json({ error: "No users found for this company" });
     } else {
       res.status(200).json(companyUsers);
     }
@@ -29,7 +31,8 @@ const getCompanyUsers = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Failed to retrieve companyUsers" });
   }
 };
-// get company x user y
+
+// Get company user by companyId and userId
 const getCompanyUser = async (req: Request, res: Response) => {
   try {
     const companyUser = await store.showCompanyUser(
@@ -37,7 +40,7 @@ const getCompanyUser = async (req: Request, res: Response) => {
       req.params.userId
     );
     if (!companyUser) {
-      res.status(404).json({ error: "companyUser not found" });
+      res.status(404).json({ error: "Company user not found" });
     } else {
       res.status(200).json(companyUser);
     }
@@ -45,12 +48,13 @@ const getCompanyUser = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Failed to retrieve companyUser" });
   }
 };
-// get user by id
+
+// Get user by id
 const getUser = async (req: Request, res: Response) => {
   try {
     const user = await store.show(req.params.userId);
     if (!user) {
-      res.status(404).json({ error: "user not found" });
+      res.status(404).json({ error: "User not found" });
     } else {
       res.status(200).json(user);
     }
@@ -68,6 +72,7 @@ const create = async (req: Request, res: Response) => {
     if (!newUser) {
       res.status(400).json({ error: "Failed to create companyUser in DB" });
     } else {
+      res.status(201).json(newUser); // Return the newly created user
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to create companyUser" });
@@ -81,7 +86,7 @@ const update = async (req: Request, res: Response) => {
     if (!user) {
       res
         .status(404)
-        .json({ error: "companyUser not found or failed to update" });
+        .json({ error: "CompanyUser not found or failed to update" });
     } else {
       res.status(200).json(user);
     }
@@ -94,9 +99,9 @@ const destroy = async (req: Request, res: Response) => {
   try {
     const success = await store.destroy(req.params.id);
     if (success) {
-      res.status(200).json({ message: "companyUser  deleted successfully" });
+      res.status(200).json({ message: "CompanyUser deleted successfully" });
     } else {
-      res.status(404).json({ error: "companyUser not found" });
+      res.status(404).json({ error: "CompanyUser not found" });
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to delete companyUser" });
