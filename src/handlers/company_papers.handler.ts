@@ -82,19 +82,12 @@ const deleteCompanyPaper = async (req: Request, res: Response) => {
 
 // Define routes for company paper operations
 const companyPapersRoutes = (app: Application) => {
-  app.get("/voyage/companyPapers", [authorization], getAllCompanyPapers);
-  app.get("/voyage/companyPapers/:paperId", [authorization], getCompanyPaper);
-  app.post("/voyage/companyPapers", [authorization], createCompanyPaper);
-  app.put(
-    "/voyage/companyPapers/:paperId",
-    [authorization],
-    updateCompanyPaper
-  );
-  app.delete(
-    "/voyage/companyPapers/:paperId",
-    [authorization],
-    deleteCompanyPaper
-  );
+  app.get("/companyPapers", [authorization], getAllCompanyPapers);
+  app.get("/companyPapers/:paperId", [authorization], getCompanyPaper);
+  // add token again
+  app.post("/companyPapers", createCompanyPaper);
+  app.put("/companyPapers/:paperId", [authorization], updateCompanyPaper);
+  app.delete("/companyPapers/:paperId", [authorization], deleteCompanyPaper);
 };
 
 export default companyPapersRoutes;

@@ -14,6 +14,7 @@ export class CompanyUsers {
         birthDate,
         role,
         gender,
+        companyId,
       } = companyUser;
       const result = await pool.query(
         `INSERT INTO company_users (first_name, last_name, email, password, phone, birth_date, role, gender, company_id) 
@@ -27,7 +28,7 @@ export class CompanyUsers {
           birthDate,
           role,
           gender,
-          companyUser.companyId,
+          companyId,
         ]
       );
       return result.rows[0];
@@ -58,6 +59,18 @@ export class CompanyUsers {
     } catch (error) {
       console.error("Failed to retrieve CompanyUsers:", error);
       return [];
+    }
+  }
+  async indexUserByEmail(email: string): Promise<CompanyUser> {
+    try {
+      const result = await pool.query(
+        `SELECT * FROM company_users WHERE email = $1;`,
+        [email]
+      );
+      return result.rows[0];
+    } catch (error) {
+      console.error(`Failed to retrieve User with email: ${email}`, error);
+      return {} as never;
     }
   }
 

@@ -1,10 +1,14 @@
 import { Request, Response, Application } from "express";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 import { authorization } from "../middlewares/authorization";
 import { CompanyUsers } from "../models/company_users.model";
 import { CompanyUser } from "../types/company";
 
 dotenv.config();
+const { SECRET_TOKEN } = process.env;
 
 const store = new CompanyUsers();
 
@@ -63,6 +67,40 @@ const getUser = async (req: Request, res: Response) => {
   }
 };
 
+const login = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const { email, password } = req.body;
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res
+        .status(400)
+        .json({ error: "Email and password must be strings" });
+    }
+
+    const user = await store.indexUserByEmail(email); // Ensure this function returns user details
+    if (!user || !user.password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ email: user.email }, SECRET_TOKEN as string, {
+      expiresIn: "1h",
+    });
+
+    // Return user details along with the token
+    return res.status(200).json({
+      message: "User logged in successfully",
+      token,
+      user,
+    });
+  } catch (error) {
+    console.error("Failed to authenticate user:", error);
+    return res.status(500).json({ error: "Failed to authenticate user" });
+  }
+};
+
 const create = async (req: Request, res: Response) => {
   try {
     const user: CompanyUser = req.body;
@@ -109,21 +147,15 @@ const destroy = async (req: Request, res: Response) => {
 };
 
 const companyUsersRoutes = (app: Application) => {
-  app.get("/voyage/companiesUsers", [authorization], getAllCompaniesUsers);
-  app.get(
-    "/voyage/companiesUsers/:companyId",
-    [authorization],
-    getCompanyUsers
-  );
-  app.get(
-    "/voyage/companiesUsers/:companyId/:userId",
-    [authorization],
-    getCompanyUser
-  );
-  app.get("/voyage/companiesUsers/:userId", [authorization], getUser);
-  app.post("/voyage/companiesUsers", [authorization], create);
-  app.put("/voyage/companiesUsers/:id", [authorization], update);
-  app.delete("/voyage/companiesUsers/:id", [authorization], destroy);
+  app.get("/company/users", [authorization], getAllCompaniesUsers);
+  app.get("/company/users/:companyId", [authorization], getCompanyUsers);
+  app.get("/company/users/:companyId/:userId", [authorization], getCompanyUser);
+  app.get("/company/users/:userId", [authorization], getUser);
+  // add token again
+  app.post("/company/signup", create);
+  app.post("/company/login", [authorization], login);
+  app.put("/company/users/:id", [authorization], update);
+  app.delete("/company/users/:id", [authorization], destroy);
 };
 
 export default companyUsersRoutes;

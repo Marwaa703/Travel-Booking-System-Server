@@ -74,11 +74,11 @@ const deleteCompany = async (req: Request, res: Response) => {
 };
 
 const companyRoutes = (app: Application) => {
-  app.get("/voyage/companies", [authorization], getAllCompanies);
-  app.get("/voyage/companies/:id", [authorization], getCompany);
-  app.post("/voyage/companies", [authorization], createCompany);
-  app.put("/voyage/companies/:id", [authorization], updateCompany);
-  app.delete("/voyage/companies/:id", [authorization], deleteCompany);
+  app.get("/companies", [authorization], getAllCompanies);
+  app.get("/companies/:id", [authorization], getCompany);
+  app.post("/companies", createCompany);
+  app.put("/companies/:id", [authorization], updateCompany);
+  app.delete("/companies/:id", [authorization], deleteCompany);
 };
 
 export default companyRoutes;

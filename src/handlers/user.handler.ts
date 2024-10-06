@@ -47,7 +47,7 @@ const createUserHandler = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Failed to create user in DB" });
     } else {
       const token = jwt.sign(
-        { name: newUser.firstName, email: newUser.email }, 
+        { name: newUser.firstName, email: newUser.email },
         SECRET_TOKEN as string
       );
       res.status(201).json({ token });
@@ -82,11 +82,17 @@ const deleteUserHandler = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(400).json({ error: "Failed to delete user" });
   }
-};const authenticateHandler = async (req: Request, res: Response): Promise<Response> => {
+};
+const authenticateHandler = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const { email, password } = req.body;
-    if (typeof email !== 'string' || typeof password !== 'string') {
-      return res.status(400).json({ error: "Email and password must be strings" });
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res
+        .status(400)
+        .json({ error: "Email and password must be strings" });
     }
 
     const user = await getUserByEmail(email); // Ensure this function returns user details
@@ -106,7 +112,7 @@ const deleteUserHandler = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: "User logged in successfully",
       token,
-      user
+      user,
     });
   } catch (error) {
     console.error("Failed to authenticate user:", error);
@@ -114,17 +120,15 @@ const deleteUserHandler = async (req: Request, res: Response) => {
   }
 };
 
-
-
 const userRoutes = (app: Application) => {
-  app.get("/voyage/users", [authorization], getAllUsersHandler);
-  app.get("/voyage/users/:id", [authorization], getUserHandler);
-  app.post("/voyage/users", [authorization], createUserHandler);
-  app.put("/voyage/users/:id", [authorization], updateUserHandler);
-  app.delete("/voyage/users/:id", [authorization], deleteUserHandler);
+  app.get("/users", [authorization], getAllUsersHandler);
+  app.get("/users/:id", [authorization], getUserHandler);
+  app.post("/users", [authorization], createUserHandler);
+  app.put("/users/:id", [authorization], updateUserHandler);
+  app.delete("/users/:id", [authorization], deleteUserHandler);
 
-  app.post("/voyage/login", authenticateHandler);
-  app.post("/voyage/signup", createUserHandler);
+  app.post("/login", authenticateHandler);
+  app.post("/signup", createUserHandler);
 };
 
 export default userRoutes;

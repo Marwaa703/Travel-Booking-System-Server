@@ -1,7 +1,7 @@
 import express from "express";
 const app = express();
 import bodyParser from "body-parser";
-const cors = require('cors');
+const cors = require("cors");
 import userRoutes from "./handlers/user.handler";
 import tripRoutes from "./handlers/trip.handler";
 import tripInstructionsRoutes from "./handlers/trip_ins.handler";
@@ -13,8 +13,8 @@ import tripImageRoutes from "./handlers/trip_images.handler";
 import tripLocationRoutes from "./handlers/trip_locations.handler";
 import registerPaymentRoute from "./smartContract/payment";
 import registerCompanyAndTripRoute from "./smartContract/addToBlockchain";
-import { getAllUsers, updateUser } from './models/user.model'; 
-import bcrypt from 'bcrypt';
+import { getAllUsers, updateUser } from "./models/user.model";
+import bcrypt from "bcrypt";
 app.use(express.json());
 app.use(cors());
 const PORT = process.env.PORT || 3002;
@@ -38,16 +38,14 @@ tripRoutes(app);
 tripImageRoutes(app);
 tripLocationRoutes(app);
 tripInstructionsRoutes(app);
-bookedTripRoutes(app); 
+bookedTripRoutes(app);
 // total: 9
-
 
 // Smart Contract Payment Integration
 registerPaymentRoute(app);
 registerCompanyAndTripRoute(app);
 
-
-
+const server = `http://localhost:${PORT}`;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on ${server}`);
 });
