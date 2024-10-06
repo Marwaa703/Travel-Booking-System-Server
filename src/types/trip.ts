@@ -35,6 +35,7 @@ export interface BookedTrip {
   id: string; // Composite ID
   userId: string;
   tripId: string;
+  transactionHash: string;
 }
 
-export type TripStatus = "paused" | "active" | "compeleted" | "canceled";
+export type TripStatus = "paused" | "active" | "complected" | "canceled";

@@ -5,11 +5,11 @@ class BookedTrips {
   // Create a new booked trip
   async create(bookedTrip: BookedTrip): Promise<BookedTrip | null> {
     try {
-      const { userId, tripId } = bookedTrip;
+      const { userId, tripId, transactionHash } = bookedTrip;
       const compositeId = `${tripId}-${userId}`; // Create composite ID
       const result = await pool.query(
-        `INSERT INTO booked_trip (id, user_id, trip_id) VALUES ($1, $2, $3) RETURNING *;`,
-        [compositeId, userId, tripId]
+        `INSERT INTO booked_trip (id, user_id, trip_id, transactionHash) VALUES ($1, $2, $3, $4) RETURNING *;`,
+        [compositeId, userId, tripId, transactionHash]
       );
       return result.rows[0];
     } catch (error) {
