@@ -1,6 +1,7 @@
 import express from "express";
 const app = express();
 import bodyParser from "body-parser";
+const cors = require('cors');
 import userRoutes from "./handlers/user.handler";
 import tripRoutes from "./handlers/trip.handler";
 import tripInstructionsRoutes from "./handlers/trip_ins.handler";
@@ -12,8 +13,11 @@ import tripImageRoutes from "./handlers/trip_images.handler";
 import tripLocationRoutes from "./handlers/trip_locations.handler";
 import registerPaymentRoute from "./smartContract/payment";
 import registerCompanyAndTripRoute from "./smartContract/addToBlockchain";
+import { getAllUsers, updateUser } from './models/user.model'; 
+import bcrypt from 'bcrypt';
 app.use(express.json());
-const PORT = process.env.PORT || 3001;
+app.use(cors());
+const PORT = process.env.PORT || 3002;
 
 app.get("/", (req, res) => {
   res.status(200).send("VOYAGE Server is running.....");
@@ -22,6 +26,7 @@ app.get("/", (req, res) => {
 // DB tables
 // user => done 1/1
 userRoutes(app);
+//*Need to Validate the Eateries in signup endpoint
 
 // Company, CompanyUsers, CompanyPapers, => done 3/3
 companyRoutes(app);

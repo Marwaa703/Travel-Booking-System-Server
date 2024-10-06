@@ -4,8 +4,7 @@ import { User } from "../types/user";
 // Create a new user
 async function createUser(user: User): Promise<User | null> {
   try {
-    const { firstName, lastName, email, password, gender, phone, birthDate } =
-      user;
+    const { firstName, lastName, email, password, gender, phone, birthDate, role = 'User' } = user; 
     const result = await pool.query(
       `INSERT INTO users (first_name, last_name, email, password, gender, phone, birth_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
       [firstName, lastName, email, password, gender, phone, birthDate]
@@ -43,17 +42,13 @@ async function getUserById(userId: string): Promise<User | null> {
 
 const getUserByEmail = async (email: string): Promise<User | null> => {
   try {
-    const query = "SELECT * FROM users WHERE email = $1";
-    const values = [email];
-
-    const result = await pool.query(query, values);
-    if (result.rows.length === 0) {
-      return null;
-    }
-    return result.rows[0] as User;
+      const query = "SELECT * FROM users WHERE email = $1";
+      const values = [email];
+      const result = await pool.query(query, values);
+      return result.rows.length > 0 ? (result.rows[0] as User) : null;
   } catch (error) {
-    console.error("Error fetching user by email:", error);
-    throw error;
+      console.error("Error fetching user by email:", error);
+      return null; 
   }
 };
 

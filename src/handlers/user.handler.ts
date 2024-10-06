@@ -47,7 +47,7 @@ const createUserHandler = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Failed to create user in DB" });
     } else {
       const token = jwt.sign(
-        { name: newUser.firstName, email: newUser.email }, // Adjusted to match the new interface
+        { name: newUser.firstName, email: newUser.email }, 
         SECRET_TOKEN as string
       );
       res.status(201).json({ token });
@@ -82,39 +82,39 @@ const deleteUserHandler = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(400).json({ error: "Failed to delete user" });
   }
-};
-
-const authenticateHandler = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+};const authenticateHandler = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return <any>(
-        res.status(400).json({ error: "Email and password are required" })
-      );
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ error: "Email and password must be strings" });
     }
-    const user = await getUserByEmail(email);
-    if (!user) {
-      return <any>res.status(401).json({ error: "Invalid credentials" });
+
+    const user = await getUserByEmail(email); // Ensure this function returns user details
+    if (!user || !user.password) {
+      return res.status(401).json({ error: "Invalid credentials" });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return <any>res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
+
     const token = jwt.sign({ email: user.email }, SECRET_TOKEN as string, {
       expiresIn: "1h",
     });
-    res.status(200).json({
+
+    // Return user details along with the token
+    return res.status(200).json({
       message: "User logged in successfully",
       token,
+      user
     });
   } catch (error) {
     console.error("Failed to authenticate user:", error);
-    res.status(500).json({ error: "Failed to authenticate user" });
+    return res.status(500).json({ error: "Failed to authenticate user" });
   }
 };
+
+
 
 const userRoutes = (app: Application) => {
   app.get("/voyage/users", [authorization], getAllUsersHandler);
