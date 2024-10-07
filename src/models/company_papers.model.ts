@@ -24,6 +24,18 @@ export class CompanyPapers {
       const result = await pool.query("SELECT * FROM company_papers;");
       return result.rows;
     } catch (error) {
+      console.error("Failed to retrieve all papers:", error);
+      return [];
+    }
+  }
+  // Get all company papers
+  async indexByCompanyId(companyId: string): Promise<CompanyPaper[]> {
+    try {
+      const result = await pool.query(
+        "SELECT * FROM company_papers WHERE company_id = $1;"
+      );
+      return result.rows;
+    } catch (error) {
       console.error("Failed to retrieve company papers:", error);
       return [];
     }

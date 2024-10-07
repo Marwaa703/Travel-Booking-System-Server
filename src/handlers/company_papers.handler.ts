@@ -18,7 +18,7 @@ const getAllCompanyPapers = async (_req: Request, res: Response) => {
   }
 };
 
-// Get a single company paper by ID
+// Get a single company paper by paper ID
 const getCompanyPaper = async (req: Request, res: Response) => {
   try {
     const companyPaper = await store.show(req.params.paperId);
@@ -29,6 +29,19 @@ const getCompanyPaper = async (req: Request, res: Response) => {
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to retrieve company paper" });
+  }
+};
+// Get a single company papers
+const getCompanyPapers = async (req: Request, res: Response) => {
+  try {
+    const companyPapers = await store.indexByCompanyId(req.params.companyId);
+    if (!companyPapers) {
+      res.status(404).json({ error: "Company papers not found" });
+    } else {
+      res.status(200).json(companyPapers);
+    }
+  } catch (error) {
+    res.status(400).json({ error: "Failed to retrieve company papers" });
   }
 };
 
@@ -84,6 +97,7 @@ const deleteCompanyPaper = async (req: Request, res: Response) => {
 const companyPapersRoutes = (app: Application) => {
   app.get("/companyPapers", [authorization], getAllCompanyPapers);
   app.get("/companyPapers/:paperId", [authorization], getCompanyPaper);
+  app.get("/companyPapers/:companyId", [authorization], getCompanyPapers);
   // add token again
   app.post("/companyPapers", createCompanyPaper);
   app.put("/companyPapers/:paperId", [authorization], updateCompanyPaper);
