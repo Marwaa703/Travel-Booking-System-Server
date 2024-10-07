@@ -76,7 +76,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
         .json({ error: "Email and password must be strings" });
     }
 
-    const user = await store.indexUserByEmail(email); // Ensure this function returns user details
+    const user = await store.indexUserByEmail(email);
     if (!user || !user.password) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -89,7 +89,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
       expiresIn: "1h",
     });
 
-    // Return user details along with the token
+    
     return res.status(200).json({
       message: "User logged in successfully",
       token,

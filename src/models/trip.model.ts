@@ -38,7 +38,7 @@ async function createTrip(trip: Trip): Promise<Trip | null> {
 // Get all trips
 async function getAllTrips(): Promise<Trip[]> {
   try {
-    const result = await pool.query("SELECT * FROM trip;");
+    const result = await pool.query("SELECT * FROM trip");
     return result.rows;
   } catch (error) {
     console.error("Failed to retrieve trips:", error);

@@ -5,11 +5,11 @@ export class TripLocations {
   // Create a new TripLocation
   async create(location: TripLocation): Promise<TripLocation | null> {
     try {
-      const { tripId, order, lat, lon, imageUrl, name } = location;
+      const { tripId, location_order, lat, lon, imageUrl, name } = location;
       const result = await pool.query(
-        `INSERT INTO trip_locations (trip_id, order, lat, lon, image_url, name) 
+        `INSERT INTO trip_locations (trip_id, location_order, lat, lon, image_url, name) 
          VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
-        [tripId, order, lat, lon, imageUrl, name]
+        [tripId, location_order, lat, lon, imageUrl, name]
       );
       return result.rows[0];
     } catch (error) {

@@ -12,7 +12,7 @@ export interface Trip {
 
 export interface TripLocation {
   tripId?: string;
-  order: number;
+  location_order: number;
   lat: number;
   lon: number;
   imageUrl: string;
