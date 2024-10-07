@@ -104,13 +104,18 @@ const login = async (req: Request, res: Response): Promise<Response> => {
 const create = async (req: Request, res: Response) => {
   try {
     const user: CompanyUser = req.body;
+    const hashedPassword = await bcrypt.hash(user.password, 10);
 
-    const newUser = await store.create({ ...user });
+    const newUser = await store.create({ ...user, password: hashedPassword });
 
     if (!newUser) {
       res.status(400).json({ error: "Failed to create companyUser in DB" });
     } else {
-      res.status(201).json(newUser); // Return the newly created user
+      const token = jwt.sign(
+        { name: newUser.firstName, email: newUser.email },
+        SECRET_TOKEN as string
+      );
+      res.status(201).json({ token }); // Return the newly created user
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to create companyUser" });
@@ -151,11 +156,11 @@ const companyUsersRoutes = (app: Application) => {
   app.get("/company/users/:companyId", [authorization], getCompanyUsers);
   app.get("/company/users/:companyId/:userId", [authorization], getCompanyUser);
   app.get("/company/users/:userId", [authorization], getUser);
-  // add token again
-  app.post("/company/signup", create);
-  app.post("/company/login", [authorization], login);
   app.put("/company/users/:id", [authorization], update);
   app.delete("/company/users/:id", [authorization], destroy);
+  //
+  app.post("/company/signup", create);
+  app.post("/company/login", login);
 };
 
 export default companyUsersRoutes;
