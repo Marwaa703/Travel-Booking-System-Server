@@ -50,7 +50,7 @@ const createUserHandler = async (req: Request, res: Response) => {
         { name: newUser.firstName, email: newUser.email },
         SECRET_TOKEN as string
       );
-      res.status(201).json({ token });
+      res.status(201).json({ token, user: newUser});
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to create user" });
