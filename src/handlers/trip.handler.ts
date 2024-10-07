@@ -1,5 +1,6 @@
 import { Request, Response, Application } from "express";
 import { authorization } from "../middlewares/authorization";
+
 import {
   createTrip,
   getAllTrips,
