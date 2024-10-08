@@ -3,26 +3,26 @@ import { BookedTrip } from "../types/trip";
 
 class BookedTrips {
   // Create a new booked trip
-  async create(bookedTrip: BookedTrip): Promise<BookedTrip | null> {
-    try {
-      const { userId, tripId, transactionHash } = bookedTrip;
-      const compositeId = `${tripId}-${userId}`; // Create composite ID
-      const result = await pool.query(
-        `INSERT INTO booked_trip (id, user_id, trip_id, transactionHash) VALUES ($1, $2, $3, $4) RETURNING *;`,
-        [compositeId, userId, tripId, transactionHash]
-      );
-      return result.rows[0];
-    } catch (error) {
-      console.error("Failed to book the trip:", error);
-      return null;
-    }
+  // Create a new booked trip
+async create(bookedTrip: BookedTrip): Promise<BookedTrip | null> {
+  try {
+    const { userId, tripId, transactionHash } = bookedTrip;
+    const result = await pool.query(
+      `INSERT INTO booked_trips (user_id, trip_id, transactionHash) VALUES ($1, $2, $3) RETURNING *;`,
+      [userId, tripId, transactionHash]
+    );
+    return result.rows[0]; 
+  } catch (error) {
+    console.error("Failed to book the trip:", error);
+    return null;
   }
+}
 
   // Get all booked trips for a user
   async getAllByUserId(userId: string): Promise<BookedTrip[]> {
     try {
       const result = await pool.query(
-        "SELECT * FROM booked_trip WHERE user_id = $1;",
+        "SELECT * FROM booked_trips WHERE user_id = $1;",
         [userId]
       );
       return result.rows;
@@ -36,7 +36,7 @@ class BookedTrips {
   async getAllUsersForTrip(tripId: string): Promise<BookedTrip[]> {
     try {
       const result = await pool.query(
-        "SELECT * FROM booked_trip WHERE trip_id = $1;",
+        "SELECT * FROM booked_trips WHERE trip_id = $1;",
         [tripId]
       );
       return result.rows;
@@ -50,7 +50,7 @@ class BookedTrips {
   async getById(id: string): Promise<BookedTrip | null> {
     try {
       const result = await pool.query(
-        "SELECT * FROM booked_trip WHERE id = $1;",
+        "SELECT * FROM booked_trips WHERE id = $1;",
         [id]
       );
       return result.rows[0];
@@ -63,7 +63,7 @@ class BookedTrips {
   // Delete a booked trip by its composite ID
   async delete(id: string): Promise<boolean> {
     try {
-      await pool.query("DELETE FROM booked_trip WHERE id = $1;", [id]);
+      await pool.query("DELETE FROM booked_trips WHERE id = $1;", [id]);
       return true;
     } catch (error) {
       console.error("Failed to delete booked trip:", error);

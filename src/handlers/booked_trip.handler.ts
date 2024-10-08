@@ -5,7 +5,7 @@ import { BookedTrip } from "../types/trip";
 // Handler to create a new booked trip
 const createBookedTripHandler = async (req: Request, res: Response) => {
   try {
-    const newBooking: BookedTrip = req.body; // Updated type
+    const newBooking: BookedTrip = req.body; 
     const bookedTrip = await BookedTrips.create(newBooking);
     if (!bookedTrip) {
       res.status(400).json({ error: "Failed to book the trip" });
@@ -74,7 +74,7 @@ const deleteBookedTripHandler = async (req: Request, res: Response) => {
 
 // Booked trips routes
 const bookedTripRoutes = (app: Application) => {
-  app.post("/booked_trip", createBookedTripHandler); // Create new booking
+  app.post("/booked_trip", createBookedTripHandler);
   app.get("/users/:userId/booked_trips", getAllBookedTripsByUserIdHandler);
   app.get("/trips/:tripId/booked_users", getAllUsersForTripHandler);
   app.get("/booked_trip/:id", getBookedTripHandler);
