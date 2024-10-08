@@ -93,4 +93,17 @@ async function deleteTrip(tripId: string): Promise<boolean> {
   }
 }
 
-export { createTrip, getAllTrips, getTripById, updateTrip, deleteTrip };
+// Get all trips by company_id
+async function getTripsByCompanyId(companyId: string): Promise<Trip[]> {
+  try {
+    const result = await pool.query("SELECT * FROM trip WHERE company_id = $1;", [
+      companyId,
+    ]);
+    return result.rows;
+  } catch (error) {
+    console.error("Failed to retrieve trips for company:", error);
+    return [];
+  }
+}
+
+export { createTrip, getAllTrips, getTripById, updateTrip, deleteTrip, getTripsByCompanyId };

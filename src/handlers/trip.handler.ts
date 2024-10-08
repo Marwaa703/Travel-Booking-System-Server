@@ -7,6 +7,7 @@ import {
   getTripById,
   updateTrip,
   deleteTrip,
+  getTripsByCompanyId,
 } from "../models/trip.model";
 
 // Handler to get all trips
@@ -77,6 +78,23 @@ const deleteTripHandler = async (req: Request, res: Response) => {
   }
 };
 
+
+// Handler to get trips by company ID
+const getTripsByCompanyIdHandler = async (req: Request, res: Response) => {
+  try {
+    const { companyId } = req.params;
+    const trips = await getTripsByCompanyId(companyId);
+    if (trips.length === 0) {
+      res.status(404).json({ error: "No trips found for the company" });
+    } else {
+      res.status(200).json(trips);
+    }
+  } catch (error) {
+    res.status(400).json({ error: "Failed to retrieve trips for company" });
+  }
+};
+
+
 // Trip routes
 const tripRoutes = (app: Application) => {
   app.get("/trips", [authorization], getAllTripsHandler);
@@ -84,6 +102,7 @@ const tripRoutes = (app: Application) => {
   app.post("/trips", [authorization], createTripHandler);
   app.put("/trips/:id", [authorization], updateTripHandler);
   app.delete("/trips/:id", [authorization], deleteTripHandler);
+  app.get("/trips/company/:companyId", [authorization], getTripsByCompanyIdHandler);
 };
 
 export default tripRoutes;

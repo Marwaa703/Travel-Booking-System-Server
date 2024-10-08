@@ -97,7 +97,7 @@ const deleteCompanyPaper = async (req: Request, res: Response) => {
 const companyPapersRoutes = (app: Application) => {
   app.get("/companyPapers", [authorization], getAllCompanyPapers);
   app.get("/companyPapers/:paperId", [authorization], getCompanyPaper);
-  app.get("/companyPapers/:companyId", getCompanyPapers);
+  app.get("/companyPaper/:companyId", getCompanyPapers);
   app.put("/companyPapers/:paperId", [authorization], updateCompanyPaper);
   app.delete("/companyPapers/:paperId", [authorization], deleteCompanyPaper);
   // add token again
