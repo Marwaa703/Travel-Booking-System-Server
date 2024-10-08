@@ -32,7 +32,8 @@ export class CompanyPapers {
   async indexByCompanyId(companyId: string): Promise<CompanyPaper[]> {
     try {
       const result = await pool.query(
-        "SELECT * FROM company_papers WHERE company_id = $1;"
+        "SELECT * FROM company_papers WHERE company_id = $1;",
+        [companyId]
       );
       return result.rows;
     } catch (error) {
