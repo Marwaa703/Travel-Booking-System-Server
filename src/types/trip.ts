@@ -1,6 +1,6 @@
 export interface Trip {
   id?: string;
-  companyId?: string;
+  company_id?: string;
   name: string;
   description: string;
   price: number;
@@ -11,18 +11,18 @@ export interface Trip {
 }
 
 export interface TripLocation {
-  tripId?: string;
+  trip_id?: string;
   location_order: number;
   lat: number;
   lon: number;
-  imageUrl: string;
+  image_url: string;
   name: string;
 }
 
 export interface TripImage {
-  imageUrl: string;
+  image_url: string;
   caption: string;
-  tripId: string;
+  trip_id: string;
 }
 
 export interface TripInstruction {
@@ -33,8 +33,8 @@ export interface TripInstruction {
 }
 export interface BookedTrip {
   id: string; // Composite ID
-  userId: string;
-  tripId: string;
+  user_id: string;
+  trip_id: string;
   transactionHash: string;
 }
 

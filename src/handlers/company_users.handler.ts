@@ -111,7 +111,7 @@ const create = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Failed to create companyUser in DB" });
     } else {
       const token = jwt.sign(
-        { name: newUser.firstName, email: newUser.email },
+        { name: newUser.first_name, email: newUser.email },
         SECRET_TOKEN as string
       );
       res.status(201).json({ token }); // Return the newly created user
@@ -152,9 +152,9 @@ const destroy = async (req: Request, res: Response) => {
 
 const companyUsersRoutes = (app: Application) => {
   app.get("/company/users", [authorization], getAllCompaniesUsers);
-  app.get("/company/users/:companyId", [authorization], getCompanyUsers);
+  app.get("/company/users/:companyId", getCompanyUsers);
   app.get("/company/users/:companyId/:userId", [authorization], getCompanyUser);
-  app.get("/company/users/:userId", [authorization], getUser);
+  app.get("/company/user/:userId", [authorization], getUser);
   app.put("/company/users/:id", [authorization], update);
   app.delete("/company/users/:id", [authorization], destroy);
   //

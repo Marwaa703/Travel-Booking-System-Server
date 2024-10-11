@@ -6,29 +6,29 @@ export class CompanyUsers {
   async create(companyUser: CompanyUser): Promise<CompanyUser | null> {
     try {
       const {
-        firstName,
-        lastName,
+        first_name,
+        last_name,
         email,
         password,
         phone,
-        birthDate,
+        birth_date,
         role,
         gender,
-        companyId,
+        company_id,
       } = companyUser;
       const result = await pool.query(
         `INSERT INTO company_users (first_name, last_name, email, password, phone, birth_date, role, gender, company_id) 
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;`,
         [
-          firstName,
-          lastName,
+          first_name,
+          last_name,
           email,
           password,
           phone,
-          birthDate,
+          birth_date,
           role,
           gender,
-          companyId,
+          company_id,
         ]
       );
       return result.rows[0];

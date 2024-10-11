@@ -5,7 +5,11 @@ export class CompanyPapers {
   // Create a new company paper
   async create(companyPaper: CompanyPaper): Promise<CompanyPaper | null> {
     try {
-      const { companyId, imageUrl, title } = companyPaper;
+      const {
+        company_id: companyId,
+        image_url: imageUrl,
+        title,
+      } = companyPaper;
       const result = await pool.query(
         `INSERT INTO company_papers (company_id, image_url, title) 
          VALUES ($1, $2, $3) RETURNING *;`,

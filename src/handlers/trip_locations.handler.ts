@@ -77,13 +77,14 @@ const deleteTripLocationHandler = async (req: Request, res: Response) => {
 
 // TripLocation routes
 const tripLocationRoutes = (app: Application) => {
-  app.post("/tripLocations", [authorization], createTripLocationHandler);
+  // can't create trip with auth
+  app.post("/tripLocations", createTripLocationHandler);
   app.get(
     "/tripLocations/:tripId",
     [authorization],
     getLocationsByTripIdHandler
   );
-  app.get("/tripLocations/:id", [authorization], getTripLocationHandler);
+  // app.get("/tripLocations/:id", [authorization], getTripLocationHandler);
   app.put("/tripLocations/:id", [authorization], updateTripLocationHandler);
   app.delete("/tripLocations/:id", [authorization], deleteTripLocationHandler);
 };

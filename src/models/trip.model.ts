@@ -5,7 +5,7 @@ import { Trip } from "../types/trip";
 async function createTrip(trip: Trip): Promise<Trip | null> {
   try {
     const {
-      companyId,
+      company_id,
       name,
       description,
       price,
@@ -16,9 +16,9 @@ async function createTrip(trip: Trip): Promise<Trip | null> {
     } = trip;
     const result = await pool.query(
       `INSERT INTO trip (company_id, name, description, price, max_reservations, date, status, rate) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
       [
-        companyId,
+        company_id,
         name,
         description,
         price,
@@ -28,6 +28,7 @@ async function createTrip(trip: Trip): Promise<Trip | null> {
         rate,
       ]
     );
+
     return result.rows[0];
   } catch (error) {
     console.error("Failed to create trip:", error);
@@ -42,6 +43,46 @@ async function getAllTrips(): Promise<Trip[]> {
     return result.rows;
   } catch (error) {
     console.error("Failed to retrieve trips:", error);
+    return [];
+  }
+}
+// Get all trips with images
+
+async function getAllTripsWithImages(companyId?: string): Promise<Trip[]> {
+  try {
+    const query = `
+        SELECT 
+        t.id AS trip_id,
+        t.company_id,
+        t.name,
+        t.description,
+        t.price,
+        t.max_reservations,
+        t.date,
+        t.status,
+        t.rate,
+        COALESCE(
+            json_agg(
+                json_build_object(
+                    'image_id', ti.image_id,
+                    'image_url', ti.image_url,
+                    'caption', ti.caption,
+                    'trip_id', ti.trip_id
+                )
+            ) FILTER (WHERE ti.image_url IS NOT NULL), 
+        '[]') AS images
+      FROM 
+        trip t
+      LEFT JOIN 
+        trip_images ti ON t.id = ti.trip_id
+      ${companyId ? "WHERE t.company_id = $1" : ""}
+      GROUP BY 
+        t.id;`;
+    const params = companyId ? [companyId] : [];
+    const result = await pool.query(query, params);
+    return result.rows;
+  } catch (error) {
+    console.error("Failed to retrieve trips with images:", error);
     return [];
   }
 }
@@ -96,9 +137,10 @@ async function deleteTrip(tripId: string): Promise<boolean> {
 // Get all trips by company_id
 async function getTripsByCompanyId(companyId: string): Promise<Trip[]> {
   try {
-    const result = await pool.query("SELECT * FROM trip WHERE company_id = $1;", [
-      companyId,
-    ]);
+    const result = await pool.query(
+      "SELECT * FROM trip WHERE company_id = $1;",
+      [companyId]
+    );
     return result.rows;
   } catch (error) {
     console.error("Failed to retrieve trips for company:", error);
@@ -106,4 +148,12 @@ async function getTripsByCompanyId(companyId: string): Promise<Trip[]> {
   }
 }
 
-export { createTrip, getAllTrips, getTripById, updateTrip, deleteTrip, getTripsByCompanyId };
+export {
+  createTrip,
+  getAllTrips,
+  getTripById,
+  updateTrip,
+  deleteTrip,
+  getTripsByCompanyId,
+  getAllTripsWithImages,
+};
