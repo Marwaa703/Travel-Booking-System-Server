@@ -81,7 +81,7 @@ const tripLocationRoutes = (app: Application) => {
   app.post("/tripLocations", createTripLocationHandler);
   app.get(
     "/tripLocations/:tripId",
-    [authorization],
+    // [authorization],
     getLocationsByTripIdHandler
   );
   // app.get("/tripLocations/:id", [authorization], getTripLocationHandler);
