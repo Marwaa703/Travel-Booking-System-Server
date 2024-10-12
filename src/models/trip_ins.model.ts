@@ -8,7 +8,7 @@ async function createTripInstruction(
   try {
     const { trip_id, instruction, display_time } = tripInstruction;
     const result = await pool.query(
-      `INSERT INTO trip_ins (trip_id, instruction, display_time) VALUES ($1, $2, $3) RETURNING *;`,
+      `INSERT INTO trip_instructions (trip_id, instruction, display_time) VALUES ($1, $2, $3) RETURNING *;`,
       [trip_id, instruction, display_time]
     );
     return result.rows[0];
@@ -24,7 +24,7 @@ async function getAllInstructionsByTripId(
 ): Promise<TripInstruction[]> {
   try {
     const result = await pool.query(
-      "SELECT * FROM trip_ins WHERE trip_id = $1;",
+      "SELECT * FROM trip_instructions WHERE trip_id = $1;",
       [tripId]
     );
     return result.rows;
@@ -39,7 +39,7 @@ async function getTripInstructionById(
   id: number
 ): Promise<TripInstruction | null> {
   try {
-    const result = await pool.query("SELECT * FROM trip_ins WHERE id = $1;", [
+    const result = await pool.query("SELECT * FROM trip_instructions WHERE id = $1;", [
       id,
     ]);
     return result.rows[0];
@@ -62,7 +62,7 @@ async function updateTripInstruction(
 
   try {
     const result = await pool.query(
-      `UPDATE trip_ins SET ${setClause} WHERE id = $1 RETURNING *;`,
+      `UPDATE trip_instructions SET ${setClause} WHERE id = $1 RETURNING *;`,
       [id, ...values]
     );
     return result.rows[0];
@@ -75,7 +75,7 @@ async function updateTripInstruction(
 // Delete a trip instruction
 async function deleteTripInstruction(id: number): Promise<boolean> {
   try {
-    await pool.query("DELETE FROM trip_ins WHERE id = $1;", [id]);
+    await pool.query("DELETE FROM trip_instructions WHERE id = $1;", [id]);
     return true;
   } catch (error) {
     console.error("Failed to delete trip instruction:", error);

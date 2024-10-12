@@ -32,7 +32,7 @@ export interface TripInstruction {
   display_time: Date;
 }
 export interface BookedTrip {
-  id: string; // Composite ID
+  // id: string; // Composite ID
   user_id: string;
   trip_id: string;
   transactionHash: string;
