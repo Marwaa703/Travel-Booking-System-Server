@@ -3,13 +3,12 @@ import { BookedTrip } from "../types/trip";
 
 class BookedTrips {
   // Create a new booked trip
-  // Create a new booked trip
   async create(bookedTrip: BookedTrip): Promise<BookedTrip | null> {
     try {
-      const { user_id: userId, trip_id: tripId, transactionHash } = bookedTrip;
+      const { user_id, trip_id, transactionHash } = bookedTrip;
       const result = await pool.query(
         `INSERT INTO booked_trips (user_id, trip_id, transactionHash) VALUES ($1, $2, $3) RETURNING *;`,
-        [userId, tripId, transactionHash]
+        [user_id, trip_id, transactionHash]
       );
       return result.rows[0];
     } catch (error) {
