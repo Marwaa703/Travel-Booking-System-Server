@@ -11,21 +11,20 @@ export class CompanyUsers {
         email,
         password,
         phone,
-        birth_date,
+        // birth_date,
         role,
         gender,
         company_id,
       } = companyUser;
       const result = await pool.query(
-        `INSERT INTO company_users (first_name, last_name, email, password, phone, birth_date, role, gender, company_id) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;`,
+        `INSERT INTO company_users (first_name, last_name, email, password, phone, role, gender, company_id) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;`,
         [
           first_name,
           last_name,
           email,
           password,
           phone,
-          birth_date,
           role,
           gender,
           company_id,

@@ -114,7 +114,7 @@ const create = async (req: Request, res: Response) => {
         { name: newUser.first_name, email: newUser.email },
         SECRET_TOKEN as string
       );
-      res.status(201).json({ token }); // Return the newly created user
+      res.status(201).json({ token, user: newUser }); // Return the newly created user
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to create companyUser" });
@@ -141,7 +141,9 @@ const destroy = async (req: Request, res: Response) => {
   try {
     const success = await store.destroy(req.params.id);
     if (success) {
-      res.status(200).json({ message: "CompanyUser deleted successfully" });
+      res
+        .status(200)
+        .json({ message: "CompanyUser deleted successfully", success: true });
     } else {
       res.status(404).json({ error: "CompanyUser not found" });
     }
@@ -151,12 +153,12 @@ const destroy = async (req: Request, res: Response) => {
 };
 
 const companyUsersRoutes = (app: Application) => {
-  app.get("/company/users", [authorization], getAllCompaniesUsers);
+  app.get("/company/users", getAllCompaniesUsers);
   app.get("/company/users/:companyId", getCompanyUsers);
   app.get("/company/users/:companyId/:userId", [authorization], getCompanyUser);
   app.get("/company/user/:userId", [authorization], getUser);
   app.put("/company/users/:id", [authorization], update);
-  app.delete("/company/users/:id", [authorization], destroy);
+  app.delete("/company/users/:id", destroy);
   //
   app.post("/company/signup", create);
   app.post("/company/login", login);

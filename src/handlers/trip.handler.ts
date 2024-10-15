@@ -9,6 +9,7 @@ import {
   deleteTrip,
   getTripsByCompanyId,
   getAllTripsWithImages,
+  deleteFullTrip,
 } from "../models/trip.model";
 
 // Handler to get all trips
@@ -76,6 +77,23 @@ const updateTripHandler = async (req: Request, res: Response) => {
 };
 
 // Handler to delete a trip
+const deleteFullTripHandler = async (req: Request, res: Response) => {
+  try {
+    const tripId = req.params.tripId; // Get the trip ID from the request parameters
+    const success = await deleteFullTrip(tripId); // Call the delete function
+
+    if (success) {
+      res.status(200).json({ message: "Trip deleted successfully" });
+    } else {
+      res.status(404).json({ error: "Trip not found" });
+    }
+  } catch (error) {
+    console.error("Error in deleteTripHandler:", error);
+    res.status(500).json({ error: "Failed to delete trip" });
+  }
+};
+
+// Handler to delete a trip
 const deleteTripHandler = async (req: Request, res: Response) => {
   try {
     const success = await deleteTrip(req.params.id);
@@ -117,8 +135,9 @@ const tripRoutes = (app: Application) => {
 
   // app.post("/trips", [authorization], createTripHandler);
   app.post("/trips", createTripHandler);
-  app.put("/trips/:id", [authorization], updateTripHandler);
+  app.put("/trips/:id", updateTripHandler);
   app.delete("/trips/:id", [authorization], deleteTripHandler);
+  app.delete("/fullTrips/:tripId", deleteFullTripHandler);
 };
 
 export default tripRoutes;

@@ -123,7 +123,36 @@ async function updateTrip(
   }
 }
 
-// Delete a trip
+// Delete full trip data
+
+async function deleteFullTrip(tripId: string): Promise<boolean> {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN"); // Start a transaction
+
+    // Delete associated images
+    await client.query("DELETE FROM trip_images WHERE trip_id = $1;", [tripId]);
+
+    // Delete associated locations
+    await client.query("DELETE FROM trip_locations WHERE trip_id = $1;", [
+      tripId,
+    ]);
+
+    // Delete the trip
+    await client.query("DELETE FROM trip WHERE id = $1;", [tripId]);
+
+    await client.query("COMMIT"); // Commit the transaction
+    return true;
+  } catch (error) {
+    await client.query("ROLLBACK"); // Roll back the transaction in case of an error
+    console.error("Failed to delete trip:", error);
+    return false;
+  } finally {
+    client.release(); // Release the database client back to the pool
+  }
+}
+
 async function deleteTrip(tripId: string): Promise<boolean> {
   try {
     await pool.query("DELETE FROM trip WHERE id = $1;", [tripId]);
@@ -133,7 +162,6 @@ async function deleteTrip(tripId: string): Promise<boolean> {
     return false;
   }
 }
-
 // Get all trips by company_id
 async function getTripsByCompanyId(companyId: string): Promise<Trip[]> {
   try {
@@ -156,4 +184,5 @@ export {
   deleteTrip,
   getTripsByCompanyId,
   getAllTripsWithImages,
+  deleteFullTrip,
 };
