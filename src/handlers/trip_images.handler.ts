@@ -77,7 +77,8 @@ const deleteTripImageHandler = async (req: Request, res: Response) => {
 
 // TripImage routes
 const tripImageRoutes = (app: Application) => {
-  app.post("/tripImages", [authorization], createTripImageHandler);
+  // auth problem, can signup with auth
+  app.post("/tripImages", createTripImageHandler);
   app.get("/tripImages/:tripId", [authorization], getImagesByTripIdHandler);
   app.get("/tripImages/:id", [authorization], getTripImageHandler);
   app.put("/tripImages/:id", [authorization], updateTripImageHandler);

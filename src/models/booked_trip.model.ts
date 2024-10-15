@@ -3,20 +3,19 @@ import { BookedTrip } from "../types/trip";
 
 class BookedTrips {
   // Create a new booked trip
-  // Create a new booked trip
-async create(bookedTrip: BookedTrip): Promise<BookedTrip | null> {
-  try {
-    const { userId, tripId, transactionHash } = bookedTrip;
-    const result = await pool.query(
-      `INSERT INTO booked_trips (user_id, trip_id, transactionHash) VALUES ($1, $2, $3) RETURNING *;`,
-      [userId, tripId, transactionHash]
-    );
-    return result.rows[0]; 
-  } catch (error) {
-    console.error("Failed to book the trip:", error);
-    return null;
+  async create(bookedTrip: BookedTrip): Promise<BookedTrip | null> {
+    try {
+      const { user_id, trip_id, transactionHash } = bookedTrip;
+      const result = await pool.query(
+        `INSERT INTO booked_trips (user_id, trip_id, transactionHash) VALUES ($1, $2, $3) RETURNING *;`,
+        [user_id, trip_id, transactionHash]
+      );
+      return result.rows[0];
+    } catch (error) {
+      console.error("Failed to book the trip:", error);
+      return null;
+    }
   }
-}
 
   // Get all booked trips for a user
   async getAllByUserId(userId: string): Promise<BookedTrip[]> {

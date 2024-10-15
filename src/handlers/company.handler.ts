@@ -77,7 +77,7 @@ const companyRoutes = (app: Application) => {
   app.get("/companies", [authorization], getAllCompanies);
   app.get("/companies/:id", [authorization], getCompany);
   app.post("/companies", createCompany);
-  app.put("/companies/:id", [authorization], updateCompany);
+  app.put("/companies/:id", updateCompany);
   app.delete("/companies/:id", [authorization], deleteCompany);
 };
 

@@ -50,10 +50,10 @@ const createUserHandler = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Failed to create user in DB" });
     } else {
       const token = jwt.sign(
-        { name: newUser.firstName, email: newUser.email },
+        { name: newUser.first_name, email: newUser.email },
         SECRET_TOKEN as string
       );
-      res.status(201).json({ token, user: newUser});
+      res.status(201).json({ token, user: newUser });
     }
   } catch (error) {
     res.status(400).json({ error: "Failed to create user" });
@@ -63,7 +63,7 @@ const createUserHandler = async (req: Request, res: Response) => {
 const updateUserHandler = async (req: Request, res: Response) => {
   try {
     const updates = req.body;
-    const updatedUser = await updateUser(req.params.id, updates); // Changed to string
+    const updatedUser = await updateUser(req.params.id, updates);
     if (!updatedUser) {
       res.status(404).json({ error: "User not found or failed to update" });
     } else {

@@ -8,6 +8,7 @@ import {
   updateTrip,
   deleteTrip,
   getTripsByCompanyId,
+  getAllTripsWithImages,
 } from "../models/trip.model";
 
 // Handler to get all trips
@@ -17,6 +18,16 @@ const getAllTripsHandler = async (_req: Request, res: Response) => {
     res.status(200).json(trips);
   } catch (error) {
     res.status(400).json({ error: "Failed to retrieve trips" });
+  }
+};
+// Handler to get all trips with images
+const getAllTripsWithImagesHandler = async (req: Request, res: Response) => {
+  const { companyId } = req.params;
+  try {
+    const trips = await getAllTripsWithImages(companyId);
+    res.status(200).json(trips);
+  } catch (error) {
+    res.status(400).json({ error: "Failed to retrieve trips with images" });
   }
 };
 
@@ -78,7 +89,6 @@ const deleteTripHandler = async (req: Request, res: Response) => {
   }
 };
 
-
 // Handler to get trips by company ID
 const getTripsByCompanyIdHandler = async (req: Request, res: Response) => {
   try {
@@ -94,15 +104,21 @@ const getTripsByCompanyIdHandler = async (req: Request, res: Response) => {
   }
 };
 
-
 // Trip routes
 const tripRoutes = (app: Application) => {
   app.get("/trips", [authorization], getAllTripsHandler);
+  app.get("/fullTrips/:companyId?", getAllTripsWithImagesHandler);
   app.get("/trips/:id", [authorization], getTripHandler);
-  app.post("/trips", [authorization], createTripHandler);
+  app.get(
+    "/trips/company/:companyId",
+    [authorization],
+    getTripsByCompanyIdHandler
+  );
+
+  // app.post("/trips", [authorization], createTripHandler);
+  app.post("/trips", createTripHandler);
   app.put("/trips/:id", [authorization], updateTripHandler);
   app.delete("/trips/:id", [authorization], deleteTripHandler);
-  app.get("/trips/company/:companyId", [authorization], getTripsByCompanyIdHandler);
 };
 
 export default tripRoutes;

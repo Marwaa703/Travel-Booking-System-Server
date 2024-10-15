@@ -3,18 +3,20 @@ import { TripLocation } from "../types/trip";
 
 export class TripLocations {
   // Create a new TripLocation
-  async create(location: TripLocation): Promise<TripLocation | null> {
+  async create(location: TripLocation): Promise<TripLocation | string> {
     try {
-      const { tripId, location_order, lat, lon, imageUrl, name } = location;
+      const { trip_id, location_order, lat, lon, image_url, name } = location;
+      console.log({ location });
       const result = await pool.query(
         `INSERT INTO trip_locations (trip_id, location_order, lat, lon, image_url, name) 
          VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
-        [tripId, location_order, lat, lon, imageUrl, name]
+        [trip_id, location_order, lat, lon, image_url, name.slice(0, 80)]
       );
+
       return result.rows[0];
     } catch (error) {
       console.error("Failed to create trip location:", error);
-      return null;
+      return `Failed to create trip location:, ${error}`;
     }
   }
 

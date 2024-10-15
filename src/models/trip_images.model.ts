@@ -5,11 +5,11 @@ export class TripImages {
   // Create a new TripImage
   async create(image: TripImage): Promise<TripImage | null> {
     try {
-      const { imageUrl, caption, tripId } = image;
+      const { image_url, caption, trip_id } = image;
       const result = await pool.query(
         `INSERT INTO trip_images (image_url, caption, trip_id) 
          VALUES ($1, $2, $3) RETURNING *;`,
-        [imageUrl, caption, tripId]
+        [image_url, caption, trip_id]
       );
       return result.rows[0];
     } catch (error) {

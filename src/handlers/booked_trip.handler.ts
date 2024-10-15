@@ -6,6 +6,8 @@ import { BookedTrip } from "../types/trip";
 const createBookedTripHandler = async (req: Request, res: Response) => {
   try {
     const newBooking: BookedTrip = req.body; 
+    console.log("Incoming booking request:", newBooking); 
+
     const bookedTrip = await BookedTrips.create(newBooking);
     if (!bookedTrip) {
       res.status(400).json({ error: "Failed to book the trip" });
@@ -13,6 +15,7 @@ const createBookedTripHandler = async (req: Request, res: Response) => {
       res.status(201).json(bookedTrip);
     }
   } catch (error) {
+    console.error("Error creating booked trip:", error);
     res.status(400).json({ error: "Failed to book the trip" });
   }
 };
