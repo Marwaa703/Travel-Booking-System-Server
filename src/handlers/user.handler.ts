@@ -7,6 +7,7 @@ import {
   createUser,
   getAllUsers,
   getUserById,
+  getAdminByEmail,
   updateUser,
   deleteUser,
   getUserByEmail,
@@ -36,6 +37,8 @@ const getUserHandler = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Failed to retrieve user" });
   }
 };
+
+
 
 const createUserHandler = async (req: Request, res: Response) => {
   try {
@@ -95,7 +98,7 @@ const authenticateHandler = async (
         .json({ error: "Email and password must be strings" });
     }
 
-    const user = await getUserByEmail(email); // Ensure this function returns user details
+    const user = await getUserByEmail(email); 
     if (!user || !user.password) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -120,6 +123,50 @@ const authenticateHandler = async (
   }
 };
 
+
+const adminHandler = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const { email, password } = req.body;
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res
+        .status(400)
+        .json({ error: "Email and password must be strings" });
+    }
+
+    const user = await getAdminByEmail(email); 
+    if (!user || !user.password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ email: user.email }, SECRET_TOKEN as string, {
+      expiresIn: "1h",
+    });
+
+    // Return user details along with the token
+    return res.status(200).json({
+      message: "User logged in successfully",
+      token,
+      user,
+    });
+  } catch (error) {
+    console.error("Failed to authenticate user:", error);
+    return res.status(500).json({ error: "Failed to authenticate user" });
+  }
+};
+
+
+
+
+
+
+
 const userRoutes = (app: Application) => {
   app.get("/users", [authorization], getAllUsersHandler);
   app.get("/users/:id", [authorization], getUserHandler);
@@ -129,6 +176,7 @@ const userRoutes = (app: Application) => {
 
   app.post("/login", authenticateHandler);
   app.post("/signup", createUserHandler);
+  app.post("/admin/login", adminHandler);
 };
 
 export default userRoutes;

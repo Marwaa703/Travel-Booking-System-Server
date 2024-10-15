@@ -40,6 +40,20 @@ async function getUserById(userId: string): Promise<User | null> {
   }
 }
 
+//Admin Login
+const getAdminByEmail = async (email: string): Promise<User | null> => {
+  try {
+      const query = "SELECT * FROM users WHERE email = $1 AND role='Admin' ";
+      const values = [email];
+      const result = await pool.query(query, values);
+      return result.rows.length > 0 ? (result.rows[0] as User) : null;
+  } catch (error) {
+      console.error("Error fetching user by email:", error);
+      return null; 
+  }
+};
+
+//Login
 const getUserByEmail = async (email: string): Promise<User | null> => {
   try {
       const query = "SELECT * FROM users WHERE email = $1";
@@ -51,6 +65,7 @@ const getUserByEmail = async (email: string): Promise<User | null> => {
       return null; 
   }
 };
+
 
 // Update a user
 async function updateUser(
@@ -91,6 +106,7 @@ export {
   getAllUsers,
   getUserById,
   getUserByEmail,
+  getAdminByEmail,
   updateUser,
   deleteUser,
 };
