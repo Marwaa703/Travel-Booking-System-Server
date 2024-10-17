@@ -17,7 +17,7 @@ async function createTrip(trip: Trip): Promise<Trip | null> {
     } = trip;
     const result = await pool.query(
       `INSERT INTO trip (company_id, name, description, price, max_reservations, date, end_date, status, rate) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
       [
         company_id,
         name,
