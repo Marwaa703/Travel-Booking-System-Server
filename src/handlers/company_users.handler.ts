@@ -86,7 +86,7 @@ const login = async (req: Request, res: Response): Promise<Response> => {
     }
 
     const token = jwt.sign({ email: user.email }, SECRET_TOKEN as string, {
-      expiresIn: "1h",
+      expiresIn: "360h",
     });
 
     return res.status(200).json({
@@ -157,7 +157,7 @@ const companyUsersRoutes = (app: Application) => {
   app.get("/company/users/:companyId", getCompanyUsers);
   app.get("/company/users/:companyId/:userId", [authorization], getCompanyUser);
   app.get("/company/user/:userId", [authorization], getUser);
-  app.put("/company/users/:id", [authorization], update);
+  app.put("/company/users/:id", update);
   app.delete("/company/users/:id", destroy);
   //
   app.post("/company/signup", create);

@@ -11,11 +11,12 @@ async function createTrip(trip: Trip): Promise<Trip | null> {
       price,
       max_reservations,
       date,
+      end_date,
       status,
       rate,
     } = trip;
     const result = await pool.query(
-      `INSERT INTO trip (company_id, name, description, price, max_reservations, date, status, rate) 
+      `INSERT INTO trip (company_id, name, description, price, max_reservations, date, end_date, status, rate) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
       [
         company_id,
@@ -24,6 +25,7 @@ async function createTrip(trip: Trip): Promise<Trip | null> {
         price,
         max_reservations,
         date,
+        end_date,
         status,
         rate,
       ]
@@ -59,6 +61,7 @@ async function getAllTripsWithImages(companyId?: string): Promise<Trip[]> {
         t.price,
         t.max_reservations,
         t.date,
+        t.end_date,
         t.status,
         t.rate,
         COALESCE(

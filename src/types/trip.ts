@@ -6,6 +6,7 @@ export interface Trip {
   price: number;
   max_reservations: number;
   date: Date;
+  end_date?: Date;
   status?: TripStatus;
   rate?: number | null;
 }

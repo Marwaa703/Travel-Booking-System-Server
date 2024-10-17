@@ -38,8 +38,6 @@ const getUserHandler = async (req: Request, res: Response) => {
   }
 };
 
-
-
 const createUserHandler = async (req: Request, res: Response) => {
   try {
     const user = req.body;
@@ -98,7 +96,7 @@ const authenticateHandler = async (
         .json({ error: "Email and password must be strings" });
     }
 
-    const user = await getUserByEmail(email); 
+    const user = await getUserByEmail(email);
     if (!user || !user.password) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -108,7 +106,7 @@ const authenticateHandler = async (
     }
 
     const token = jwt.sign({ email: user.email }, SECRET_TOKEN as string, {
-      expiresIn: "1h",
+      expiresIn: "360h",
     });
 
     // Return user details along with the token
@@ -123,11 +121,7 @@ const authenticateHandler = async (
   }
 };
 
-
-const adminHandler = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+const adminHandler = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { email, password } = req.body;
     if (typeof email !== "string" || typeof password !== "string") {
@@ -136,7 +130,7 @@ const adminHandler = async (
         .json({ error: "Email and password must be strings" });
     }
 
-    const user = await getAdminByEmail(email); 
+    const user = await getAdminByEmail(email);
     if (!user || !user.password) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -146,7 +140,7 @@ const adminHandler = async (
     }
 
     const token = jwt.sign({ email: user.email }, SECRET_TOKEN as string, {
-      expiresIn: "1h",
+      expiresIn: "360h",
     });
 
     // Return user details along with the token
@@ -160,12 +154,6 @@ const adminHandler = async (
     return res.status(500).json({ error: "Failed to authenticate user" });
   }
 };
-
-
-
-
-
-
 
 const userRoutes = (app: Application) => {
   app.get("/users", [authorization], getAllUsersHandler);

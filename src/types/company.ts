@@ -5,6 +5,8 @@ export interface Company {
   logo: string;
   wallet?: string;
   approved?: boolean;
+  status?: ApproveStatus;
+  admin_msg?: string | null;
 }
 
 export interface CompanyPaper {
@@ -32,3 +34,4 @@ export interface CompanyUser {
 
 export type CompanyUserRoles = "Representative" | "Support" | "TourGuide";
 export type Gender = "male" | "female";
+export type ApproveStatus = "pending" | "approved" | "rejected";

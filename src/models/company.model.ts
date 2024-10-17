@@ -1,6 +1,6 @@
 import pool from "../db";
 import dotenv from "dotenv";
-import { Company } from "../types/company";
+import { ApproveStatus, Company } from "../types/company";
 
 dotenv.config();
 
@@ -8,15 +8,25 @@ export class Companies {
   // Create a new company
   async create(company: Company): Promise<Company | null> {
     try {
-      const { name, address, logo, wallet, approved } = company;
+      const {
+        name,
+        address,
+        logo,
+        wallet,
+        approved,
+        status = "pending",
+        admin_msg = null,
+      } = company;
       const result = await pool.query(
-        `INSERT INTO companies (name, address, logo, wallet, approved) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
+        `INSERT INTO companies (name, address, logo, wallet, approved, status, admin_msg) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
         [
           name,
           address,
           logo,
           wallet,
           approved ?? false, // Set default value if not provided
+          status,
+          admin_msg,
         ]
       );
       return result.rows[0];
