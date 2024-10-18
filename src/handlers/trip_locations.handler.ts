@@ -75,6 +75,22 @@ const deleteTripLocationHandler = async (req: Request, res: Response) => {
   }
 };
 
+
+const searchTripLocationsByNameHandler = async (req: Request, res: Response) => {
+  try {
+    const name = req.query.name as string;
+    if (!name) {
+      return res.status(400).json({ error: "Name query parameter is required" });
+    }
+
+    const locations = await store.searchByName(name);
+    res.status(200).json(locations);
+  } catch (error) {
+    res.status(400).json({ error: "Failed to search trip locations" });
+  }
+};
+
+
 // TripLocation routes
 const tripLocationRoutes = (app: Application) => {
   // can't create trip with auth
@@ -87,6 +103,7 @@ const tripLocationRoutes = (app: Application) => {
   // app.get("/tripLocations/:id", [authorization], getTripLocationHandler);
   app.put("/tripLocations/:id", [authorization], updateTripLocationHandler);
   app.delete("/tripLocations/:id", [authorization], deleteTripLocationHandler);
+  app.get("/tripLocations/search", searchTripLocationsByNameHandler);
 };
 
 export default tripLocationRoutes;

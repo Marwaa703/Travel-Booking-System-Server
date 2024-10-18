@@ -83,4 +83,20 @@ export class TripLocations {
       return false;
     }
   }
+
+  // Search for TripLocations by name
+  async searchByName(name: string): Promise<TripLocation[]> {
+    try {
+      const result = await pool.query(
+        "SELECT * FROM trip_locations WHERE name ILIKE $1;",
+        [`%${name}%`]
+      );
+      return result.rows;
+    } catch (error) {
+      console.error("Failed to search trip locations:", error);
+      return [];
+    }
+  }
+
 }
+
